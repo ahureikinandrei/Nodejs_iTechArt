@@ -5,8 +5,11 @@ import {
     PersonalInfoModel,
     ProdModel,
     UserModel,
-} from '../models/index';
-import { IUser } from './types/user.types';
+} from '../models';
+import { IGetAllQueryParams, IUser } from './types/user.types';
+import Prod from '../models/prods.models';
+import User from '../models/user.model';
+import userService from '../services/user.service';
 
 class UserController {
     async create(
@@ -46,12 +49,20 @@ class UserController {
     }
 
     async getAll(
-        req: Request,
-        res: Response,
+        req: Request<{}, User[], {}, IGetAllQueryParams, {}>,
+        res: Response<User[]>,
         next: NextFunction
     ): Promise<Response | void> {
         try {
-            const users = await UserModel.findAll();
+            const { name, lang, min, max } = req.query;
+
+            const users = await userService.findAllByParams(
+                name,
+                lang,
+                min,
+                max
+            );
+
             res.json(users);
         } catch (e) {
             next(ApiError.internal(e.message));
@@ -60,23 +71,16 @@ class UserController {
 
     async getOne(
         req: Request,
-        res: Response,
+        res: Response<User | null>,
         next: NextFunction
-    ): Promise<Response | void> {
+    ): Promise<void> {
         try {
             const { id } = req.params;
             if (!id) {
                 next(ApiError.badRequest('ID not found'));
             }
 
-            const user = await UserModel.findOne({
-                where: { id },
-                include: [
-                    { model: PersonalInfoModel, as: 'info' },
-                    { model: AddressModel, as: 'address' },
-                    { model: ProdModel, as: 'prods' },
-                ],
-            });
+            const user = await userService.findOneByParams(id);
 
             res.json(user);
         } catch (e) {
@@ -105,7 +109,7 @@ class UserController {
         }
     }
 
-    async update(req: Request, res: Response<number>, next: NextFunction) {
+    async update(req: Request, res: Response<Prod[]>, next: NextFunction) {
         try {
             const { id } = req.params;
             if (!id) {
@@ -117,18 +121,18 @@ class UserController {
             });
 
             const prod = await ProdModel.findOne({
-                where: { id: 1 },
+                where: { id: 3 },
             });
 
             if (!user || !prod) {
-                next(ApiError.badRequest('user or prod not found'));
+                next(ApiError.badRequest('User or prod not found'));
                 return;
             }
 
-            const inf = await user.addProd(prod);
-            console.log(inf);
+            await user.addProd(prod);
+            const userProds = await user.getProds();
 
-            res.json(123);
+            res.json(userProds);
         } catch (e) {
             next(ApiError.internal(e.message));
         }

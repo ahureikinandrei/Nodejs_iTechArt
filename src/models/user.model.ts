@@ -3,6 +3,7 @@ import {
     CreationOptional,
     DataTypes,
     HasManyAddAssociationMixin,
+    HasManyGetAssociationsMixin,
     InferAttributes,
     InferCreationAttributes,
     Model,
@@ -34,6 +35,8 @@ class User extends Model<InferAttributes<User>, InferCreationAttributes<User>> {
 
     declare addProd: HasManyAddAssociationMixin<Prod, number>;
 
+    declare getProds: HasManyGetAssociationsMixin<Prod>;
+
     declare static associations: {
         info: Association<User, PersonalInfoModel>;
         address: Association<User, Address>;
@@ -57,10 +60,10 @@ User.init(
 );
 
 User.hasOne(PersonalInfoModel, { as: 'info', foreignKey: 'userId' });
-PersonalInfoModel.belongsTo(User);
+PersonalInfoModel.belongsTo(User, { foreignKey: 'userId' });
 
 User.hasOne(Address, { as: 'address', foreignKey: 'userId' });
-Address.belongsTo(User);
+Address.belongsTo(User, { foreignKey: 'userId' });
 
 User.belongsToMany(Prod, { through: 'UserProd', as: 'prods' });
 Prod.belongsToMany(User, { through: 'UserProd', as: 'users' });

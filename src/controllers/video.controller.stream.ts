@@ -26,9 +26,9 @@ class VideoController {
                 req.pipe(stream);
             });
 
-            stream.on('data', (chunk) => {
-                console.log(chunk);
-            });
+            // stream.on('data', (chunk) => {
+            //     console.log(chunk);
+            // });
 
             stream.on('close', () => {
                 return res.json(fileName);

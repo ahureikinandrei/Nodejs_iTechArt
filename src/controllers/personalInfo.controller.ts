@@ -1,6 +1,12 @@
 import { Request, Response, NextFunction } from 'express';
+import { Op } from 'sequelize';
 import ApiError from '../../error/ApiError';
-import { PersonalInfoModel } from '../models/index';
+import { PersonalInfoModel } from '../models';
+import {
+    IPersonalInfo,
+    IFindParams,
+    IGetQuery,
+} from './types/personalInfo.types';
 
 class PersonalInfoController {
     async create(
@@ -23,12 +29,40 @@ class PersonalInfoController {
     }
 
     async getAll(
-        req: Request,
-        res: Response,
+        req: Request<{}, IPersonalInfo[], {}, IGetQuery>,
+        res: Response<IPersonalInfo[]>,
         next: NextFunction
     ): Promise<Response | void> {
         try {
-            const personalInfo = await PersonalInfoModel.findAll();
+            const { langs, first, strict, min, max } = req.query;
+
+            const findParams: IFindParams = {
+                where: {},
+            };
+
+            if (Array.isArray(langs)) {
+                const operation = strict === 'true' ? Op.contains : Op.overlap;
+                findParams.where.langs = { [operation]: langs };
+            }
+
+            if (typeof langs === 'string') {
+                findParams.where.langs = { [Op.contains]: [langs] };
+            }
+
+            if (min || max) {
+                findParams.where.sizes = { [Op.overlap]: [min, max] };
+            }
+
+            const personalInfo = await PersonalInfoModel.findAll(findParams);
+
+            if (first === 'true') {
+                const personalInfoFiltered = personalInfo.filter((info) => {
+                    const mainLang = info.langs ? info.langs[0] : '';
+                    return mainLang === langs;
+                });
+                res.json(personalInfoFiltered);
+                return;
+            }
             res.json(personalInfo);
         } catch (e) {
             next(ApiError.internal(e.message));
@@ -45,7 +79,6 @@ class PersonalInfoController {
 
             const personalInfo = await PersonalInfoModel.findOne({
                 where: { id },
-                include: [{ model: PersonalInfoModel, as: 'info' }],
             });
             res.json(personalInfo);
         } catch (e) {

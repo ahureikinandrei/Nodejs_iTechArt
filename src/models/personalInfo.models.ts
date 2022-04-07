@@ -4,10 +4,8 @@ import {
     InferAttributes,
     InferCreationAttributes,
     Model,
-    NonAttribute,
 } from 'sequelize';
 import sequelize from '../db';
-import User from './user.model';
 
 class PersonalInfoModel extends Model<
     InferAttributes<PersonalInfoModel>,
@@ -26,8 +24,6 @@ class PersonalInfoModel extends Model<
     declare updatedAt: CreationOptional<Date>;
 
     declare userId: number;
-
-    declare user?: NonAttribute<User>;
 }
 
 PersonalInfoModel.init(

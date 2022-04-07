@@ -25,5 +25,17 @@
     "class-methods-use-this": "off",
     "consistent-return": "off",
     "import/no-cycle": "off"
+  },
+  "settings": {
+    "import/resolver": {
+      "node": {
+        "extensions": [
+          ".js",
+          ".jsx",
+          ".ts",
+          ".tsx"
+        ]
+      }
+    }
   }
 }
