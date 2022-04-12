@@ -6,10 +6,13 @@ dotenv.config();
 import cors from 'cors';
 import path from 'path';
 import fileUpload from 'express-fileupload';
+import { createClient } from 'redis';
 import sequelize from './db';
-
 import { PORT } from '../config/constants';
 import router from './routes';
+
+// eslint-disable-next-line import/prefer-default-export
+export const redisClient = createClient({ url: 'redis://localhost:6379' });
 
 const port = PORT || 5000;
 const app: Express = express();
@@ -35,6 +38,12 @@ const start = async () => {
     try {
         await sequelize.authenticate();
         await sequelize.sync();
+
+        redisClient.on('error', (err) => {
+            console.log('Redis Client Error', err);
+            console.log('Check redis docker container status');
+        });
+
         app.listen(port, () => {
             console.log(
                 `[server]: Server is running at https://localhost:${port}`

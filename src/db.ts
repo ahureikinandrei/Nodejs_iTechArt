@@ -17,4 +17,5 @@ export default new Sequelize(dbName, userName, userPassword, {
     dialect: 'postgres',
     host,
     port,
+    logging: false,
 });

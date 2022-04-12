@@ -7,6 +7,7 @@ import userRouter from './user.router';
 import personalInfoRouter from './personalInfo.router';
 import prodRouter from './prods.router';
 import addressRouter from './addresses.router';
+import redisRouter from './redis.route';
 
 const router = Router();
 
@@ -18,5 +19,6 @@ router.use('/user', userRouter);
 router.use('/personalInfo', personalInfoRouter);
 router.use('/prod', prodRouter);
 router.use('/address', addressRouter);
+router.use('/redis', redisRouter);
 
 export default router;
