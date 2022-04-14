@@ -8,6 +8,7 @@ import personalInfoRouter from './personalInfo.router';
 import prodRouter from './prods.router';
 import addressRouter from './addresses.router';
 import redisRouter from './redis.route';
+import fileSystemWhitDbRouter from './fileSystemWhitDb.router';
 
 const router = Router();
 
@@ -20,5 +21,6 @@ router.use('/personalInfo', personalInfoRouter);
 router.use('/prod', prodRouter);
 router.use('/address', addressRouter);
 router.use('/redis', redisRouter);
+router.use('/fsDb', fileSystemWhitDbRouter);
 
 export default router;

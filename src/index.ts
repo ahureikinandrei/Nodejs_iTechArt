@@ -21,12 +21,7 @@ app.use(cors());
 app.use(express.urlencoded({ extended: false }));
 app.use(express.json());
 app.use(express.static(path.resolve(__dirname, 'static')));
-app.use(
-    fileUpload({
-        useTempFiles: true,
-        tempFileDir: '/tmp/',
-    })
-);
+app.use(fileUpload());
 
 app.use('/api', router);
 

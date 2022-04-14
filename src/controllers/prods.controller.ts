@@ -103,6 +103,7 @@ class ProdController {
 
             const user = await ProdModel.findOne({
                 where: { id },
+                raw: true,
             });
 
             res.json(user);
