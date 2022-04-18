@@ -1,5 +1,5 @@
 /* eslint-disable import/first */
-import express, { Express, Request, Response } from 'express';
+import express, { Express } from 'express';
 import dotenv from 'dotenv';
 
 dotenv.config();
@@ -10,6 +10,7 @@ import { createClient } from 'redis';
 import sequelize from './db';
 import { PORT } from '../config/constants';
 import router from './routes';
+import errorHandler from '../middleware/ErrorHandlingMiddleware';
 
 // eslint-disable-next-line import/prefer-default-export
 export const redisClient = createClient({ url: 'redis://localhost:6379' });
@@ -24,10 +25,7 @@ app.use(express.static(path.resolve(__dirname, 'static')));
 app.use(fileUpload());
 
 app.use('/api', router);
-
-app.get('/', (req: Request, res: Response) => {
-    res.send('Express + TypeScript Server');
-});
+app.use(errorHandler);
 
 const start = async () => {
     try {

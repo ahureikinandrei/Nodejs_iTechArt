@@ -9,6 +9,8 @@ import prodRouter from './prods.router';
 import addressRouter from './addresses.router';
 import redisRouter from './redis.route';
 import fileSystemWhitDbRouter from './fileSystemWhitDb.router';
+import pdfRouter from './pdf.router';
+import mailRouter from './mail.router';
 
 const router = Router();
 
@@ -22,5 +24,7 @@ router.use('/prod', prodRouter);
 router.use('/address', addressRouter);
 router.use('/redis', redisRouter);
 router.use('/fsDb', fileSystemWhitDbRouter);
+router.use('/pdf', pdfRouter);
+router.use('/mail', mailRouter);
 
 export default router;

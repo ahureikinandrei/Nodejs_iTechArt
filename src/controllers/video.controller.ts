@@ -34,7 +34,7 @@ class VideoController {
             const { fileName } = req.params;
 
             if (!fileName) {
-                next(ApiError.notFound('File not found'));
+                return next(ApiError.notFound('File not found'));
             }
 
             const pathToFile = path.join(
